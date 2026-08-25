@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# 运行时生成
+config.json
+send_history.txt
+
+# 打包产物
+*.zip
+
+# 系统
+Thumbs.db
+.DS_Store
