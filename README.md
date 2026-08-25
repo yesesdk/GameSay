@@ -31,6 +31,15 @@
 
 ## 🚀 快速开始
 
+### 方式一：免安装 exe（推荐）
+
+下载 **GameSay.exe**（GitHub Releases），**任何电脑双击即用** —— 自带 Python 运行时，无需安装任何环境 ٩(◕‿◕｡)۶
+
+- 首次启动会弹 UAC 管理员授权，点「是」（游戏常以管理员运行，工具需要同等权限才能注入按键）
+- 词库会自动释放到 exe 旁边（`data/` 和 `libraries/` 文件夹），可直接编辑、扩展
+
+### 方式二：源码运行
+
 ```powershell
 # 1. 安装依赖（仅需 customtkinter）
 pip install customtkinter
@@ -39,7 +48,7 @@ pip install customtkinter
 python game_say.py
 ```
 
-或者直接双击 `启动游戏快捷语录.bat`（首次运行自动装依赖）(・ω・)ノ
+或者双击 `启动游戏快捷语录.bat`（自动装依赖 + 自动提权）(・ω・)ノ
 
 ### 📖 使用三步走
 
