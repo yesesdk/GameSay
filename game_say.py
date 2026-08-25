@@ -14,21 +14,53 @@ import json
 import os
 import queue
 import random
+import shutil
+import sys
 import threading
 import time
 import winsound
 from datetime import datetime
 from pathlib import Path
+
 import customtkinter as ctk
 import tkinter.messagebox as messagebox
 
 import keysim
 from hotkey import HotkeyListener, KEY_CHOICES, MODIFIER_CHOICES
 
-ROOT = Path(__file__).resolve().parent
+# ---- 路径：兼容源码运行与 PyInstaller 打包运行 ----
+FROZEN = getattr(sys, "frozen", False)
+if FROZEN:
+    # exe 所在目录（用户可写，词库释放到这里）
+    ROOT = Path(sys.executable).resolve().parent
+    # PyInstaller 解包的内置资源目录
+    BUNDLE = Path(getattr(sys, "_MEIPASS", ROOT))
+else:
+    ROOT = Path(__file__).resolve().parent
+    BUNDLE = ROOT
+
 DATA_DIR = ROOT / "data"
 LIB_DIR = ROOT / "libraries"
 CONFIG_FILE = ROOT / "config.json"
+
+
+def ensure_resources() -> None:
+    """打包版首次运行：把内置词库释放到 exe 旁边（可编辑、可扩展）。"""
+    if not FROZEN:
+        return
+    builtin = BUNDLE / "data" / "游戏语录.txt"
+    if builtin.exists():
+        DATA_DIR.mkdir(parents=True, exist_ok=True)
+        dst = DATA_DIR / "游戏语录.txt"
+        if not dst.exists():
+            shutil.copy2(builtin, dst)
+    src_lib = BUNDLE / "libraries"
+    if src_lib.exists():
+        LIB_DIR.mkdir(parents=True, exist_ok=True)
+        for f in src_lib.glob("*.txt"):
+            dst = LIB_DIR / f.name
+            if not dst.exists():
+                shutil.copy2(f, dst)
 
 APP_NAME = "GameSay"
 APP_SUB = "游戏快捷语录 · 一键随机喊话（全自动）"
@@ -72,6 +104,7 @@ def is_admin() -> bool:
 class GameSayApp(ctk.CTk):
     def __init__(self):
         super().__init__(fg_color=BG)
+        ensure_resources()
         self.title(f"{APP_NAME} · 游戏快捷语录")
         self.geometry("1160x840")
         self.minsize(980, 720)
