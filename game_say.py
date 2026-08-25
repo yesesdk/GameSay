@@ -19,7 +19,6 @@ import time
 import winsound
 from datetime import datetime
 from pathlib import Path
-
 import customtkinter as ctk
 import tkinter.messagebox as messagebox
 
@@ -61,6 +60,15 @@ PASTE_COMBOS = {"Ctrl+V": ("Ctrl",), "Ctrl+Shift+V": ("Ctrl", "Shift")}
 CHAT_KEYS = ["无", "回车", "T", "Y", "~", "/", "空格"] + [f"F{i}" for i in range(1, 13)]
 
 
+def is_admin() -> bool:
+    """当前进程是否以管理员权限运行。"""
+    try:
+        import ctypes
+        return bool(ctypes.windll.shell32.IsUserAnAdmin())
+    except Exception:
+        return False
+
+
 class GameSayApp(ctk.CTk):
     def __init__(self):
         super().__init__(fg_color=BG)
@@ -81,6 +89,13 @@ class GameSayApp(ctk.CTk):
         self._load_config()
         self.after(100, self._drain_ui_queue)
         self.protocol("WM_DELETE_WINDOW", self._on_close)
+        if not is_admin():
+            self._log(
+                "[提示] 当前为普通权限：若游戏以管理员身份运行，请用「以管理员身份运行」启动本工具，"
+                "否则按键无法注入游戏（启动脚本已支持自动提权）",
+                "#ffb454",
+            )
+            self._set_status("普通权限运行中（游戏若管理员运行请提权）", WARN)
 
     # ---------------------------------------------------------------- UI 线程
     def _drain_ui_queue(self):
