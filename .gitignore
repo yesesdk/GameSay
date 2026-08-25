@@ -7,6 +7,9 @@ __pycache__/
 config.json
 send_history.txt
 
+# 本地工具（便携版 gh 等）
+tools/
+
 # 打包产物
 *.zip
 
